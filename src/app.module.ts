@@ -1,29 +1,22 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from './auth/guards/jwt.guard';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { ClientsModule, Transport } from "@nestjs/microservices";
+import { AppService } from "./app.service";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<string | number>('JWT_EXPIRES') },
-      }),
-    }), AuthModule,
+    ClientsModule.register([
+      {
+        name: "SERVICE_A",
+        transport: Transport.TCP,
+        options: {
+          host: "127.0.0.1",
+          port: 3001
+        }
+      }
+    ])
   ],
   controllers: [AppController],
-  providers: [    {
-    provide: APP_GUARD,
-    useClass: JwtAuthGuard, // Global guard for token validation
-  },
-  AppService],
+  providers: [AppService]
 })
 export class AppModule {}
