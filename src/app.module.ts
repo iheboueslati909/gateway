@@ -19,6 +19,14 @@ import { AuthModule } from "./auth/auth.module";
           host: "127.0.0.1",
           port: 3001,
         }
+      },
+      {
+        name: "SERVICE_B",
+        transport: Transport.TCP,
+        options: {
+          host: "127.0.0.1",
+          port: 3002,
+        }
       }
     ]),
     OrderModule,

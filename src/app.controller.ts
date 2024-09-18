@@ -1,37 +1,36 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ClientProxy, MessagePattern } from '@nestjs/microservices';
-import { AppService } from './app.service';
-import { delay } from "rxjs/operators";
-import { of } from "rxjs";
-import { UserService } from './user/user.service';
-import { OrderService } from './order/order.service';
-import { AuthService } from './auth/auth.service';
+import { Controller, Get, Req, Res, Inject, BadRequestException } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { Request, Response } from 'express';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
-    private readonly userService: UserService,
-    private readonly orderService: OrderService,
-    private readonly authService: AuthService
+    @Inject('SERVICE_A') private readonly userServiceClient: ClientProxy,  // Microservice A
+    @Inject('SERVICE_B') private readonly orderServiceClient: ClientProxy, // Microservice B
   ) {}
-  
-  routeRequest(service: string) {
+
+  routeRequest(service: string): ClientProxy {
     switch (service) {
-      case 'user':
-        return this.userService;
+      case 'users':
+        return this.userServiceClient;
       case 'orders':
-        return this.orderService;
-      case 'auth':
-        return this.authService;
+        return this.orderServiceClient;
       default:
-        throw new Error('Unknown service');
+        throw new BadRequestException("No such service");
     }
   }
-  
-  @Get("/ping-a")
-  pingServiceA() {
-    console.log("fggg")
-    return this.appService.pingServiceA();
+
+  @Get('*')
+  async handleRequest(@Req() req: Request, @Res() res: Response) {
+    const service = req.path.split('/')[1];
+
+    const client = this.routeRequest(service);
+
+    try {
+      const response = await client.send({ cmd: req.method }, req.body).toPromise();
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json({ message: 'Error processing request', error: error.message });
+    }
   }
 }
