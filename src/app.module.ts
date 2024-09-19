@@ -8,9 +8,18 @@ import { OrderService } from "./order/order.service";
 import { AuthService } from "./auth/auth.service";
 import { UserService } from "./user/user.service";
 import { AuthModule } from "./auth/auth.module";
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+const ENV = process.env.NODE_ENV || 'dev';
+dotenv.config({ path: path.resolve(process.cwd(), `.env.${ENV}`) });
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
     ClientsModule.register([
       {
         name: "SERVICE_A",
@@ -29,9 +38,9 @@ import { AuthModule } from "./auth/auth.module";
         }
       }
     ]),
+    AuthModule,
     OrderModule,
     UserModule,
-    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService,OrderService,AuthService,UserService]
