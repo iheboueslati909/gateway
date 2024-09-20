@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, Inject, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Req, Res, Inject, BadRequestException, Post, Put, Delete } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Request, Response } from 'express';
 
@@ -21,7 +21,7 @@ export class AppController {
   }
 
   @Get('*')
-  async handleRequest(@Req() req: Request, @Res() res: Response) {
+  async handleGetRequest(@Req() req: Request, @Res() res: Response) {
     const service = req.path.split('/')[1];
     const client = this.routeRequest(service);
     const command = `${req.method.toUpperCase()}/${service.toUpperCase()}/${req.path.split('/').slice(2).join('/').toUpperCase()}`;
@@ -33,4 +33,47 @@ export class AppController {
       return res.status(500).json({ message: 'Error processing request', error: error.message });
     }
   }
+
+  @Post('*')
+  async handlePostRequest(@Req() req: Request, @Res() res: Response) {
+    const service = req.path.split('/')[1];
+    const client = this.routeRequest(service);
+    const command = `${req.method.toUpperCase()}/${service.toUpperCase()}/${req.path.split('/').slice(2).join('/').toUpperCase()}`;
+
+    try {
+      const response = await client.send({ cmd: command }, req.body).toPromise();
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json({ message: 'Error processing request', error: error.message });
+    }
+  }
+
+  @Put('*')
+  async handlePutRequest(@Req() req: Request, @Res() res: Response) {
+    const service = req.path.split('/')[1];
+    const client = this.routeRequest(service);
+    const command = `${req.method.toUpperCase()}/${service.toUpperCase()}/${req.path.split('/').slice(2).join('/').toUpperCase()}`;
+
+    try {
+      const response = await client.send({ cmd: command }, req.body).toPromise();
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json({ message: 'Error processing request', error: error.message });
+    }
+  }
+
+  @Delete('*')
+  async handleDeleteRequest(@Req() req: Request, @Res() res: Response) {
+    const service = req.path.split('/')[1];
+    const client = this.routeRequest(service);
+    const command = `${req.method.toUpperCase()}/${service.toUpperCase()}/${req.path.split('/').slice(2).join('/').toUpperCase()}`;
+
+    try {
+      const response = await client.send({ cmd: command }, req.body).toPromise();
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json({ message: 'Error processing request', error: error.message });
+    }
+  }
+
 }
