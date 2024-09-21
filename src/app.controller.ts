@@ -11,9 +11,9 @@ export class AppController {
 
   routeRequest(service: string): ClientProxy {
     switch (service) {
-      case 'users':
+      case 'users_API':
         return this.userServiceClient;
-      case 'orders':
+      case 'events_API':
         return this.orderServiceClient;
       default:
         throw new BadRequestException("No such service");
@@ -22,10 +22,9 @@ export class AppController {
 
   @Get('*')
   async handleGetRequest(@Req() req: Request, @Res() res: Response) {
-    const service = req.path.split('/')[1];
+    const service = req.path.split('/')[1]+'_API';
     const client = this.routeRequest(service);
     const command = `${req.method.toUpperCase()}/${service.toUpperCase()}/${req.path.split('/').slice(2).join('/').toUpperCase()}`;
-
     try {
       const response = await client.send({ cmd: command }, req.body).toPromise();
       return res.json(response);
@@ -36,7 +35,7 @@ export class AppController {
 
   @Post('*')
   async handlePostRequest(@Req() req: Request, @Res() res: Response) {
-    const service = req.path.split('/')[1];
+    const service = req.path.split('/')[1]+'_API';
     const client = this.routeRequest(service);
     const command = `${req.method.toUpperCase()}/${service.toUpperCase()}/${req.path.split('/').slice(2).join('/').toUpperCase()}`;
 
@@ -50,7 +49,7 @@ export class AppController {
 
   @Put('*')
   async handlePutRequest(@Req() req: Request, @Res() res: Response) {
-    const service = req.path.split('/')[1];
+    const service = req.path.split('/')[1]+'_API';
     const client = this.routeRequest(service);
     const command = `${req.method.toUpperCase()}/${service.toUpperCase()}/${req.path.split('/').slice(2).join('/').toUpperCase()}`;
 
@@ -64,7 +63,7 @@ export class AppController {
 
   @Delete('*')
   async handleDeleteRequest(@Req() req: Request, @Res() res: Response) {
-    const service = req.path.split('/')[1];
+    const service = req.path.split('/')[1]+'_API';
     const client = this.routeRequest(service);
     const command = `${req.method.toUpperCase()}/${service.toUpperCase()}/${req.path.split('/').slice(2).join('/').toUpperCase()}`;
 
