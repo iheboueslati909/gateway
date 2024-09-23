@@ -1,7 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from './auth/guards/jwt.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,8 @@ async function bootstrap() {
     { inheritAppConfig: true },
   );
 
+  //supposed to make authguard work globally but it seems useless marking this for later research
+  //app.useGlobalGuards(new JwtAuthGuard(new Reflector()));
   await app.startAllMicroservices();
   await app.listen(port);
   console.log("env = ", process.env.NODE_ENV , " host:port = " , host,":",port);
