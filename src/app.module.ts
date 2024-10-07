@@ -18,7 +18,7 @@ dotenv.config({ path: path.resolve(process.cwd(), `.env.${ENV}`) });
     }),
     ClientsModule.register([
       {
-        name: "SERVICE_A",
+        name: "USER_MS",
         transport: Transport.TCP,
         options: {
           host: "127.0.0.1",
@@ -26,7 +26,7 @@ dotenv.config({ path: path.resolve(process.cwd(), `.env.${ENV}`) });
         }
       },
       {
-        name: "SERVICE_B",
+        name: "EVENTS_MS",
         transport: Transport.TCP,
         options: {
           host: "127.0.0.1",

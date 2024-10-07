@@ -5,7 +5,7 @@ import { map } from "rxjs/operators";
 @Injectable()
 export class AppService {
   constructor(
-    @Inject("SERVICE_A") private readonly clientServiceA: ClientProxy
+    @Inject("USER_MS") private readonly clientServiceA: ClientProxy
   ) {}
 
   pingServiceA() {

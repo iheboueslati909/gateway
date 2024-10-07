@@ -9,8 +9,8 @@ import { Public } from './auth/decorators/public.decorator';
 @UseGuards(JwtAuthGuard)
 export class AppController {
   constructor(
-    @Inject('SERVICE_A') private readonly userServiceClient: ClientProxy,  // Microservice A
-    @Inject('SERVICE_B') private readonly orderServiceClient: ClientProxy, // Microservice B
+    @Inject('USER_MS') private readonly userServiceClient: ClientProxy,  // Microservice A
+    @Inject('EVENTS_MS') private readonly orderServiceClient: ClientProxy, // Microservice B
     private readonly authService: AuthService
   ) {}
 
