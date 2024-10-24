@@ -1,3 +1,43 @@
 syntax = "proto3";
 
 package gateway;
+import "google/protobuf/struct.proto";
+
+service GatewayService {
+  rpc GetRequest (GetRequestMessage) returns (GenericResponse);
+  rpc PostRequest (PostRequestMessage) returns (GenericResponse);
+  rpc PutRequest (PutRequestMessage) returns (GenericResponse);
+  rpc DeleteRequest (DeleteRequestMessage) returns (GenericResponse);
+}
+
+message GetRequestMessage {
+  string service_name = 1; // The microservice to route the request to
+  string path = 2;         // The specific resource being requested (similar to URL path)
+  map<string, string> query_params = 3;  // Optional query parameters for the request
+}
+
+message PostRequestMessage {
+  string service_name = 1; // The microservice to route the request to
+  string path = 2;         // The specific resource being requested (similar to URL path)
+  map<string, string> query_params = 3;  // Optional query parameters for the request
+  google.protobuf.Struct body = 4;       // The JSON body for the POST request
+}
+
+message PutRequestMessage {
+  string service_name = 1; // The microservice to route the request to
+  string path = 2;         // The specific resource being requested (similar to URL path)
+  map<string, string> query_params = 3;  // Optional query parameters for the request
+  google.protobuf.Struct body = 4;       // The JSON body for the PUT request
+}
+
+message DeleteRequestMessage {
+  string service_name = 1; // The microservice to route the request to
+  string path = 2;         // The specific resource being requested (similar to URL path)
+  map<string, string> query_params = 3;  // Optional query parameters for the request
+}
+
+message GenericResponse {
+  int32 status_code = 1;     // HTTP-like status code (e.g., 200, 404, etc.)
+  string message = 2;        // A human-readable message
+  google.protobuf.Struct data = 3;  // The response body in JSON format
+}

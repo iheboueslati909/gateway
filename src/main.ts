@@ -7,13 +7,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 
 async function bootstrap() {
-  //const app = await NestFactory.create(AppModule);
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  const app = await NestFactory.create(AppModule);
+  
+  const grpcApp = await app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
       package: 'gateway',
       protoPath: join(__dirname, '../proto/gateway-app.proto'),
-      url: 'localhost:8888', 
+      url: 'localhost:50000',  // un-hard code it
     },
   });
   const configService = app.get(ConfigService);
@@ -21,24 +22,11 @@ async function bootstrap() {
   const port = configService.get<number>('APP_PORT');
   const host = configService.get<string>('APP_HOST');
 
-  /*const microservice = app.connectMicroservice({
-    transport: Transport.TCP,
-    options: {
-      host: host,
-      port: port,
-    },
-  },
-    { inheritAppConfig: true },
-  );
-  */
-
-  //supposed to make authguard work globally but it seems useless marking this for later research
-  //app.useGlobalGuards(new JwtAuthGuard(new Reflector()));
-  //await app.startAllMicroservices();
   app.useGlobalPipes(new ValidationPipe());
-  //await app.listen(port);
   console.log("env = ", process.env.NODE_ENV , " host:port = " , host,":",port);
-  //await microservice.listen();
+
+  await app.startAllMicroservices();
+  await app.listen(port, host); 
 }
 
 bootstrap();

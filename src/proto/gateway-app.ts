@@ -5,5 +5,1053 @@
 // source: src/proto/gateway-app.proto
 
 /* eslint-disable */
+import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { Struct } from "../../google/protobuf/struct";
 
 export const protobufPackage = "gateway";
+
+export interface GetRequestMessage {
+  /** The microservice to route the request to */
+  serviceName: string;
+  /** The specific resource being requested (similar to URL path) */
+  path: string;
+  /** Optional query parameters for the request */
+  queryParams: { [key: string]: string };
+}
+
+export interface GetRequestMessage_QueryParamsEntry {
+  key: string;
+  value: string;
+}
+
+export interface PostRequestMessage {
+  /** The microservice to route the request to */
+  serviceName: string;
+  /** The specific resource being requested (similar to URL path) */
+  path: string;
+  /** Optional query parameters for the request */
+  queryParams: { [key: string]: string };
+  /** The JSON body for the POST request */
+  body: { [key: string]: any } | undefined;
+}
+
+export interface PostRequestMessage_QueryParamsEntry {
+  key: string;
+  value: string;
+}
+
+export interface PutRequestMessage {
+  /** The microservice to route the request to */
+  serviceName: string;
+  /** The specific resource being requested (similar to URL path) */
+  path: string;
+  /** Optional query parameters for the request */
+  queryParams: { [key: string]: string };
+  /** The JSON body for the PUT request */
+  body: { [key: string]: any } | undefined;
+}
+
+export interface PutRequestMessage_QueryParamsEntry {
+  key: string;
+  value: string;
+}
+
+export interface DeleteRequestMessage {
+  /** The microservice to route the request to */
+  serviceName: string;
+  /** The specific resource being requested (similar to URL path) */
+  path: string;
+  /** Optional query parameters for the request */
+  queryParams: { [key: string]: string };
+}
+
+export interface DeleteRequestMessage_QueryParamsEntry {
+  key: string;
+  value: string;
+}
+
+export interface GenericResponse {
+  /** HTTP-like status code (e.g., 200, 404, etc.) */
+  statusCode: number;
+  /** A human-readable message */
+  message: string;
+  /** The response body in JSON format */
+  data: { [key: string]: any } | undefined;
+}
+
+function createBaseGetRequestMessage(): GetRequestMessage {
+  return { serviceName: "", path: "", queryParams: {} };
+}
+
+export const GetRequestMessage: MessageFns<GetRequestMessage> = {
+  encode(message: GetRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.serviceName !== "") {
+      writer.uint32(10).string(message.serviceName);
+    }
+    if (message.path !== "") {
+      writer.uint32(18).string(message.path);
+    }
+    Object.entries(message.queryParams).forEach(([key, value]) => {
+      GetRequestMessage_QueryParamsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
+    });
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetRequestMessage {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetRequestMessage();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.serviceName = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.path = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          const entry3 = GetRequestMessage_QueryParamsEntry.decode(reader, reader.uint32());
+          if (entry3.value !== undefined) {
+            message.queryParams[entry3.key] = entry3.value;
+          }
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetRequestMessage {
+    return {
+      serviceName: isSet(object.serviceName) ? globalThis.String(object.serviceName) : "",
+      path: isSet(object.path) ? globalThis.String(object.path) : "",
+      queryParams: isObject(object.queryParams)
+        ? Object.entries(object.queryParams).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+          acc[key] = String(value);
+          return acc;
+        }, {})
+        : {},
+    };
+  },
+
+  toJSON(message: GetRequestMessage): unknown {
+    const obj: any = {};
+    if (message.serviceName !== "") {
+      obj.serviceName = message.serviceName;
+    }
+    if (message.path !== "") {
+      obj.path = message.path;
+    }
+    if (message.queryParams) {
+      const entries = Object.entries(message.queryParams);
+      if (entries.length > 0) {
+        obj.queryParams = {};
+        entries.forEach(([k, v]) => {
+          obj.queryParams[k] = v;
+        });
+      }
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetRequestMessage>, I>>(base?: I): GetRequestMessage {
+    return GetRequestMessage.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetRequestMessage>, I>>(object: I): GetRequestMessage {
+    const message = createBaseGetRequestMessage();
+    message.serviceName = object.serviceName ?? "";
+    message.path = object.path ?? "";
+    message.queryParams = Object.entries(object.queryParams ?? {}).reduce<{ [key: string]: string }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = globalThis.String(value);
+        }
+        return acc;
+      },
+      {},
+    );
+    return message;
+  },
+};
+
+function createBaseGetRequestMessage_QueryParamsEntry(): GetRequestMessage_QueryParamsEntry {
+  return { key: "", value: "" };
+}
+
+export const GetRequestMessage_QueryParamsEntry: MessageFns<GetRequestMessage_QueryParamsEntry> = {
+  encode(message: GetRequestMessage_QueryParamsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetRequestMessage_QueryParamsEntry {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetRequestMessage_QueryParamsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetRequestMessage_QueryParamsEntry {
+    return {
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
+  },
+
+  toJSON(message: GetRequestMessage_QueryParamsEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetRequestMessage_QueryParamsEntry>, I>>(
+    base?: I,
+  ): GetRequestMessage_QueryParamsEntry {
+    return GetRequestMessage_QueryParamsEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetRequestMessage_QueryParamsEntry>, I>>(
+    object: I,
+  ): GetRequestMessage_QueryParamsEntry {
+    const message = createBaseGetRequestMessage_QueryParamsEntry();
+    message.key = object.key ?? "";
+    message.value = object.value ?? "";
+    return message;
+  },
+};
+
+function createBasePostRequestMessage(): PostRequestMessage {
+  return { serviceName: "", path: "", queryParams: {}, body: undefined };
+}
+
+export const PostRequestMessage: MessageFns<PostRequestMessage> = {
+  encode(message: PostRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.serviceName !== "") {
+      writer.uint32(10).string(message.serviceName);
+    }
+    if (message.path !== "") {
+      writer.uint32(18).string(message.path);
+    }
+    Object.entries(message.queryParams).forEach(([key, value]) => {
+      PostRequestMessage_QueryParamsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
+    });
+    if (message.body !== undefined) {
+      Struct.encode(Struct.wrap(message.body), writer.uint32(34).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): PostRequestMessage {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePostRequestMessage();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.serviceName = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.path = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          const entry3 = PostRequestMessage_QueryParamsEntry.decode(reader, reader.uint32());
+          if (entry3.value !== undefined) {
+            message.queryParams[entry3.key] = entry3.value;
+          }
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.body = Struct.unwrap(Struct.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PostRequestMessage {
+    return {
+      serviceName: isSet(object.serviceName) ? globalThis.String(object.serviceName) : "",
+      path: isSet(object.path) ? globalThis.String(object.path) : "",
+      queryParams: isObject(object.queryParams)
+        ? Object.entries(object.queryParams).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+          acc[key] = String(value);
+          return acc;
+        }, {})
+        : {},
+      body: isObject(object.body) ? object.body : undefined,
+    };
+  },
+
+  toJSON(message: PostRequestMessage): unknown {
+    const obj: any = {};
+    if (message.serviceName !== "") {
+      obj.serviceName = message.serviceName;
+    }
+    if (message.path !== "") {
+      obj.path = message.path;
+    }
+    if (message.queryParams) {
+      const entries = Object.entries(message.queryParams);
+      if (entries.length > 0) {
+        obj.queryParams = {};
+        entries.forEach(([k, v]) => {
+          obj.queryParams[k] = v;
+        });
+      }
+    }
+    if (message.body !== undefined) {
+      obj.body = message.body;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PostRequestMessage>, I>>(base?: I): PostRequestMessage {
+    return PostRequestMessage.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<PostRequestMessage>, I>>(object: I): PostRequestMessage {
+    const message = createBasePostRequestMessage();
+    message.serviceName = object.serviceName ?? "";
+    message.path = object.path ?? "";
+    message.queryParams = Object.entries(object.queryParams ?? {}).reduce<{ [key: string]: string }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = globalThis.String(value);
+        }
+        return acc;
+      },
+      {},
+    );
+    message.body = object.body ?? undefined;
+    return message;
+  },
+};
+
+function createBasePostRequestMessage_QueryParamsEntry(): PostRequestMessage_QueryParamsEntry {
+  return { key: "", value: "" };
+}
+
+export const PostRequestMessage_QueryParamsEntry: MessageFns<PostRequestMessage_QueryParamsEntry> = {
+  encode(message: PostRequestMessage_QueryParamsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): PostRequestMessage_QueryParamsEntry {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePostRequestMessage_QueryParamsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PostRequestMessage_QueryParamsEntry {
+    return {
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
+  },
+
+  toJSON(message: PostRequestMessage_QueryParamsEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PostRequestMessage_QueryParamsEntry>, I>>(
+    base?: I,
+  ): PostRequestMessage_QueryParamsEntry {
+    return PostRequestMessage_QueryParamsEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<PostRequestMessage_QueryParamsEntry>, I>>(
+    object: I,
+  ): PostRequestMessage_QueryParamsEntry {
+    const message = createBasePostRequestMessage_QueryParamsEntry();
+    message.key = object.key ?? "";
+    message.value = object.value ?? "";
+    return message;
+  },
+};
+
+function createBasePutRequestMessage(): PutRequestMessage {
+  return { serviceName: "", path: "", queryParams: {}, body: undefined };
+}
+
+export const PutRequestMessage: MessageFns<PutRequestMessage> = {
+  encode(message: PutRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.serviceName !== "") {
+      writer.uint32(10).string(message.serviceName);
+    }
+    if (message.path !== "") {
+      writer.uint32(18).string(message.path);
+    }
+    Object.entries(message.queryParams).forEach(([key, value]) => {
+      PutRequestMessage_QueryParamsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
+    });
+    if (message.body !== undefined) {
+      Struct.encode(Struct.wrap(message.body), writer.uint32(34).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): PutRequestMessage {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePutRequestMessage();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.serviceName = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.path = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          const entry3 = PutRequestMessage_QueryParamsEntry.decode(reader, reader.uint32());
+          if (entry3.value !== undefined) {
+            message.queryParams[entry3.key] = entry3.value;
+          }
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.body = Struct.unwrap(Struct.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PutRequestMessage {
+    return {
+      serviceName: isSet(object.serviceName) ? globalThis.String(object.serviceName) : "",
+      path: isSet(object.path) ? globalThis.String(object.path) : "",
+      queryParams: isObject(object.queryParams)
+        ? Object.entries(object.queryParams).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+          acc[key] = String(value);
+          return acc;
+        }, {})
+        : {},
+      body: isObject(object.body) ? object.body : undefined,
+    };
+  },
+
+  toJSON(message: PutRequestMessage): unknown {
+    const obj: any = {};
+    if (message.serviceName !== "") {
+      obj.serviceName = message.serviceName;
+    }
+    if (message.path !== "") {
+      obj.path = message.path;
+    }
+    if (message.queryParams) {
+      const entries = Object.entries(message.queryParams);
+      if (entries.length > 0) {
+        obj.queryParams = {};
+        entries.forEach(([k, v]) => {
+          obj.queryParams[k] = v;
+        });
+      }
+    }
+    if (message.body !== undefined) {
+      obj.body = message.body;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PutRequestMessage>, I>>(base?: I): PutRequestMessage {
+    return PutRequestMessage.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<PutRequestMessage>, I>>(object: I): PutRequestMessage {
+    const message = createBasePutRequestMessage();
+    message.serviceName = object.serviceName ?? "";
+    message.path = object.path ?? "";
+    message.queryParams = Object.entries(object.queryParams ?? {}).reduce<{ [key: string]: string }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = globalThis.String(value);
+        }
+        return acc;
+      },
+      {},
+    );
+    message.body = object.body ?? undefined;
+    return message;
+  },
+};
+
+function createBasePutRequestMessage_QueryParamsEntry(): PutRequestMessage_QueryParamsEntry {
+  return { key: "", value: "" };
+}
+
+export const PutRequestMessage_QueryParamsEntry: MessageFns<PutRequestMessage_QueryParamsEntry> = {
+  encode(message: PutRequestMessage_QueryParamsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): PutRequestMessage_QueryParamsEntry {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePutRequestMessage_QueryParamsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PutRequestMessage_QueryParamsEntry {
+    return {
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
+  },
+
+  toJSON(message: PutRequestMessage_QueryParamsEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PutRequestMessage_QueryParamsEntry>, I>>(
+    base?: I,
+  ): PutRequestMessage_QueryParamsEntry {
+    return PutRequestMessage_QueryParamsEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<PutRequestMessage_QueryParamsEntry>, I>>(
+    object: I,
+  ): PutRequestMessage_QueryParamsEntry {
+    const message = createBasePutRequestMessage_QueryParamsEntry();
+    message.key = object.key ?? "";
+    message.value = object.value ?? "";
+    return message;
+  },
+};
+
+function createBaseDeleteRequestMessage(): DeleteRequestMessage {
+  return { serviceName: "", path: "", queryParams: {} };
+}
+
+export const DeleteRequestMessage: MessageFns<DeleteRequestMessage> = {
+  encode(message: DeleteRequestMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.serviceName !== "") {
+      writer.uint32(10).string(message.serviceName);
+    }
+    if (message.path !== "") {
+      writer.uint32(18).string(message.path);
+    }
+    Object.entries(message.queryParams).forEach(([key, value]) => {
+      DeleteRequestMessage_QueryParamsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
+    });
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): DeleteRequestMessage {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeleteRequestMessage();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.serviceName = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.path = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          const entry3 = DeleteRequestMessage_QueryParamsEntry.decode(reader, reader.uint32());
+          if (entry3.value !== undefined) {
+            message.queryParams[entry3.key] = entry3.value;
+          }
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DeleteRequestMessage {
+    return {
+      serviceName: isSet(object.serviceName) ? globalThis.String(object.serviceName) : "",
+      path: isSet(object.path) ? globalThis.String(object.path) : "",
+      queryParams: isObject(object.queryParams)
+        ? Object.entries(object.queryParams).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+          acc[key] = String(value);
+          return acc;
+        }, {})
+        : {},
+    };
+  },
+
+  toJSON(message: DeleteRequestMessage): unknown {
+    const obj: any = {};
+    if (message.serviceName !== "") {
+      obj.serviceName = message.serviceName;
+    }
+    if (message.path !== "") {
+      obj.path = message.path;
+    }
+    if (message.queryParams) {
+      const entries = Object.entries(message.queryParams);
+      if (entries.length > 0) {
+        obj.queryParams = {};
+        entries.forEach(([k, v]) => {
+          obj.queryParams[k] = v;
+        });
+      }
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DeleteRequestMessage>, I>>(base?: I): DeleteRequestMessage {
+    return DeleteRequestMessage.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DeleteRequestMessage>, I>>(object: I): DeleteRequestMessage {
+    const message = createBaseDeleteRequestMessage();
+    message.serviceName = object.serviceName ?? "";
+    message.path = object.path ?? "";
+    message.queryParams = Object.entries(object.queryParams ?? {}).reduce<{ [key: string]: string }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = globalThis.String(value);
+        }
+        return acc;
+      },
+      {},
+    );
+    return message;
+  },
+};
+
+function createBaseDeleteRequestMessage_QueryParamsEntry(): DeleteRequestMessage_QueryParamsEntry {
+  return { key: "", value: "" };
+}
+
+export const DeleteRequestMessage_QueryParamsEntry: MessageFns<DeleteRequestMessage_QueryParamsEntry> = {
+  encode(message: DeleteRequestMessage_QueryParamsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): DeleteRequestMessage_QueryParamsEntry {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeleteRequestMessage_QueryParamsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DeleteRequestMessage_QueryParamsEntry {
+    return {
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
+  },
+
+  toJSON(message: DeleteRequestMessage_QueryParamsEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DeleteRequestMessage_QueryParamsEntry>, I>>(
+    base?: I,
+  ): DeleteRequestMessage_QueryParamsEntry {
+    return DeleteRequestMessage_QueryParamsEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DeleteRequestMessage_QueryParamsEntry>, I>>(
+    object: I,
+  ): DeleteRequestMessage_QueryParamsEntry {
+    const message = createBaseDeleteRequestMessage_QueryParamsEntry();
+    message.key = object.key ?? "";
+    message.value = object.value ?? "";
+    return message;
+  },
+};
+
+function createBaseGenericResponse(): GenericResponse {
+  return { statusCode: 0, message: "", data: undefined };
+}
+
+export const GenericResponse: MessageFns<GenericResponse> = {
+  encode(message: GenericResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.statusCode !== 0) {
+      writer.uint32(8).int32(message.statusCode);
+    }
+    if (message.message !== "") {
+      writer.uint32(18).string(message.message);
+    }
+    if (message.data !== undefined) {
+      Struct.encode(Struct.wrap(message.data), writer.uint32(26).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GenericResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenericResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.statusCode = reader.int32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.data = Struct.unwrap(Struct.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenericResponse {
+    return {
+      statusCode: isSet(object.statusCode) ? globalThis.Number(object.statusCode) : 0,
+      message: isSet(object.message) ? globalThis.String(object.message) : "",
+      data: isObject(object.data) ? object.data : undefined,
+    };
+  },
+
+  toJSON(message: GenericResponse): unknown {
+    const obj: any = {};
+    if (message.statusCode !== 0) {
+      obj.statusCode = Math.round(message.statusCode);
+    }
+    if (message.message !== "") {
+      obj.message = message.message;
+    }
+    if (message.data !== undefined) {
+      obj.data = message.data;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GenericResponse>, I>>(base?: I): GenericResponse {
+    return GenericResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GenericResponse>, I>>(object: I): GenericResponse {
+    const message = createBaseGenericResponse();
+    message.statusCode = object.statusCode ?? 0;
+    message.message = object.message ?? "";
+    message.data = object.data ?? undefined;
+    return message;
+  },
+};
+
+export interface GatewayService {
+  GetRequest(request: GetRequestMessage): Promise<GenericResponse>;
+  PostRequest(request: PostRequestMessage): Promise<GenericResponse>;
+  PutRequest(request: PutRequestMessage): Promise<GenericResponse>;
+  DeleteRequest(request: DeleteRequestMessage): Promise<GenericResponse>;
+}
+
+export const GatewayServiceServiceName = "gateway.GatewayService";
+export class GatewayServiceClientImpl implements GatewayService {
+  private readonly rpc: Rpc;
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || GatewayServiceServiceName;
+    this.rpc = rpc;
+    this.GetRequest = this.GetRequest.bind(this);
+    this.PostRequest = this.PostRequest.bind(this);
+    this.PutRequest = this.PutRequest.bind(this);
+    this.DeleteRequest = this.DeleteRequest.bind(this);
+  }
+  GetRequest(request: GetRequestMessage): Promise<GenericResponse> {
+    const data = GetRequestMessage.encode(request).finish();
+    const promise = this.rpc.request(this.service, "GetRequest", data);
+    return promise.then((data) => GenericResponse.decode(new BinaryReader(data)));
+  }
+
+  PostRequest(request: PostRequestMessage): Promise<GenericResponse> {
+    const data = PostRequestMessage.encode(request).finish();
+    const promise = this.rpc.request(this.service, "PostRequest", data);
+    return promise.then((data) => GenericResponse.decode(new BinaryReader(data)));
+  }
+
+  PutRequest(request: PutRequestMessage): Promise<GenericResponse> {
+    const data = PutRequestMessage.encode(request).finish();
+    const promise = this.rpc.request(this.service, "PutRequest", data);
+    return promise.then((data) => GenericResponse.decode(new BinaryReader(data)));
+  }
+
+  DeleteRequest(request: DeleteRequestMessage): Promise<GenericResponse> {
+    const data = DeleteRequestMessage.encode(request).finish();
+    const promise = this.rpc.request(this.service, "DeleteRequest", data);
+    return promise.then((data) => GenericResponse.decode(new BinaryReader(data)));
+  }
+}
+
+interface Rpc {
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
+}
+
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function isObject(value: any): boolean {
+  return typeof value === "object" && value !== null;
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
+}
+
+export interface MessageFns<T> {
+  encode(message: T, writer?: BinaryWriter): BinaryWriter;
+  decode(input: BinaryReader | Uint8Array, length?: number): T;
+  fromJSON(object: any): T;
+  toJSON(message: T): unknown;
+  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+}
