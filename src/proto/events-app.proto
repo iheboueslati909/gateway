@@ -1,0 +1,67 @@
+syntax = "proto3";
+package eventsms;  // Renamed from 'hero' to 'eventsms'
+import "google/protobuf/empty.proto";
+
+//------------------- MAIN APP SERVICE
+service HealthCheck {
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  bool healthy = 1;
+}
+
+//------------------- ARTISTS SERVICE
+service ArtistService {
+  rpc GetArtistById(GetArtistByIdRequest) returns (ArtistResponse);
+  rpc UpdateArtist(UpdateArtistRequest) returns (ArtistResponse);
+  rpc DeleteArtist(DeleteArtistRequest) returns (ArtistResponse);
+  rpc CreateArtist(CreateArtistRequest) returns (ArtistResponse);
+  rpc GetAllArtists(google.protobuf.Empty) returns (ArtistListResponse);
+}
+
+message GetArtistByIdRequest {
+  string id = 1;
+}
+
+message UpdateArtistRequest {
+  string id = 1;
+  string name = 2;
+  string bio = 3;
+  repeated string genres = 4;
+  bool availability = 5;
+  repeated string socialLinks = 6;
+  string user = 7;
+}
+
+message DeleteArtistRequest {
+  string id = 1;
+}
+
+message CreateArtistRequest {
+  string name = 1;
+  string bio = 2;
+  repeated string genres = 3;
+  bool availability = 4;
+  repeated string socialLinks = 5;
+  string user = 6;
+}
+
+message ArtistResponse {
+  string id = 1;
+  string name = 2;
+  string bio = 3;
+  repeated string genres = 4;
+  bool availability = 5;
+  repeated string socialLinks = 6;
+  string user = 7;
+  string createdAt = 8;
+  string updatedAt = 9;
+}
+
+message ArtistListResponse {
+  repeated ArtistResponse artists = 1;
+}
+

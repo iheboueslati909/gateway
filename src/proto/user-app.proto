@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package userms;
+
+//------------------- MAIN APP SERVICE
+service HealthCheck {
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  bool healthy = 1;
+}
+
+// Enum for user roles
+enum Role {
+  USER = 0;
+  MANAGER = 1;
+  ADMIN = 2;
+}
+
+// Message to create a user
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  repeated Role roles = 4;
+}
+
+// Message to update a user
+message UpdateUserRequest {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+  repeated Role roles = 5;
+}
+
+// Message for user ID
+message UserIdRequest {
+  string id = 1;
+}
+
+// Response message for a single user
+message UserResponse {
+  string id = 1;             // ID of the user
+  string name = 2;           // User name
+  string email = 3;          // Email of the user
+  //string password = 4;       // Password of the user (encrypted/hashed)
+  repeated Role roles = 5;   // Roles assigned to the user
+}
+
+// Response message for multiple users
+message UserListResponse {
+  repeated UserResponse users = 1;
+}
+
+// Empty message
+message Empty {}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message FindUserByIdRequest {
+  string id = 1;
+}
+
+// User service with RPC methods
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (UserResponse);        // Create a user
+  rpc FindAllUsers(Empty) returns (UserListResponse);              // Fetch all users
+  rpc FindUserById(UserIdRequest) returns (UserResponse);          // Fetch a user by ID
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse);        // Update a user
+  rpc DeleteUser(UserIdRequest) returns (Empty);                   // Delete a user by ID
+}
+
