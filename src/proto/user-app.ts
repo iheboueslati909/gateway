@@ -107,6 +107,25 @@ export interface FindUserByIdRequest {
   id: string;
 }
 
+/** SignUp request message */
+export interface SignUpRequest {
+  name: string;
+  email: string;
+  password: string;
+  roles: string[];
+}
+
+/** Login request message */
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+/** AuthResponse message containing the JWT token */
+export interface AuthResponse {
+  token: string;
+}
+
 function createBaseHealthCheckRequest(): HealthCheckRequest {
   return {};
 }
@@ -861,26 +880,247 @@ export const FindUserByIdRequest: MessageFns<FindUserByIdRequest> = {
   },
 };
 
-/** ------------------- MAIN APP SERVICE */
-export interface HealthCheck {
-  Check(request: HealthCheckRequest): Promise<HealthCheckResponse>;
+function createBaseSignUpRequest(): SignUpRequest {
+  return { name: "", email: "", password: "", roles: [] };
 }
 
-export const HealthCheckServiceName = "userms.HealthCheck";
-export class HealthCheckClientImpl implements HealthCheck {
-  private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || HealthCheckServiceName;
-    this.rpc = rpc;
-    this.Check = this.Check.bind(this);
-  }
-  Check(request: HealthCheckRequest): Promise<HealthCheckResponse> {
-    const data = HealthCheckRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "Check", data);
-    return promise.then((data) => HealthCheckResponse.decode(new BinaryReader(data)));
-  }
+export const SignUpRequest: MessageFns<SignUpRequest> = {
+  encode(message: SignUpRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
+    }
+    if (message.email !== "") {
+      writer.uint32(18).string(message.email);
+    }
+    if (message.password !== "") {
+      writer.uint32(26).string(message.password);
+    }
+    for (const v of message.roles) {
+      writer.uint32(34).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SignUpRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSignUpRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.password = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.roles.push(reader.string());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SignUpRequest {
+    return {
+      name: isSet(object.name) ? globalThis.String(object.name) : "",
+      email: isSet(object.email) ? globalThis.String(object.email) : "",
+      password: isSet(object.password) ? globalThis.String(object.password) : "",
+      roles: globalThis.Array.isArray(object?.roles) ? object.roles.map((e: any) => globalThis.String(e)) : [],
+    };
+  },
+
+  toJSON(message: SignUpRequest): unknown {
+    const obj: any = {};
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    if (message.password !== "") {
+      obj.password = message.password;
+    }
+    if (message.roles?.length) {
+      obj.roles = message.roles;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SignUpRequest>, I>>(base?: I): SignUpRequest {
+    return SignUpRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SignUpRequest>, I>>(object: I): SignUpRequest {
+    const message = createBaseSignUpRequest();
+    message.name = object.name ?? "";
+    message.email = object.email ?? "";
+    message.password = object.password ?? "";
+    message.roles = object.roles?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseLoginRequest(): LoginRequest {
+  return { email: "", password: "" };
 }
+
+export const LoginRequest: MessageFns<LoginRequest> = {
+  encode(message: LoginRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.email !== "") {
+      writer.uint32(10).string(message.email);
+    }
+    if (message.password !== "") {
+      writer.uint32(18).string(message.password);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LoginRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLoginRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.password = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LoginRequest {
+    return {
+      email: isSet(object.email) ? globalThis.String(object.email) : "",
+      password: isSet(object.password) ? globalThis.String(object.password) : "",
+    };
+  },
+
+  toJSON(message: LoginRequest): unknown {
+    const obj: any = {};
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    if (message.password !== "") {
+      obj.password = message.password;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LoginRequest>, I>>(base?: I): LoginRequest {
+    return LoginRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LoginRequest>, I>>(object: I): LoginRequest {
+    const message = createBaseLoginRequest();
+    message.email = object.email ?? "";
+    message.password = object.password ?? "";
+    return message;
+  },
+};
+
+function createBaseAuthResponse(): AuthResponse {
+  return { token: "" };
+}
+
+export const AuthResponse: MessageFns<AuthResponse> = {
+  encode(message: AuthResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): AuthResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAuthResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AuthResponse {
+    return { token: isSet(object.token) ? globalThis.String(object.token) : "" };
+  },
+
+  toJSON(message: AuthResponse): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<AuthResponse>, I>>(base?: I): AuthResponse {
+    return AuthResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<AuthResponse>, I>>(object: I): AuthResponse {
+    const message = createBaseAuthResponse();
+    message.token = object.token ?? "";
+    return message;
+  },
+};
 
 /** User service with RPC methods */
 export interface UserService {
@@ -892,8 +1132,10 @@ export interface UserService {
   FindUserById(request: UserIdRequest): Promise<UserResponse>;
   /** Update a user */
   UpdateUser(request: UpdateUserRequest): Promise<UserResponse>;
-  /** Delete a user by ID */
   DeleteUser(request: UserIdRequest): Promise<Empty>;
+  SignUp(request: SignUpRequest): Promise<AuthResponse>;
+  /** Delete a user by ID */
+  Login(request: LoginRequest): Promise<AuthResponse>;
 }
 
 export const UserServiceServiceName = "userms.UserService";
@@ -908,6 +1150,8 @@ export class UserServiceClientImpl implements UserService {
     this.FindUserById = this.FindUserById.bind(this);
     this.UpdateUser = this.UpdateUser.bind(this);
     this.DeleteUser = this.DeleteUser.bind(this);
+    this.SignUp = this.SignUp.bind(this);
+    this.Login = this.Login.bind(this);
   }
   CreateUser(request: CreateUserRequest): Promise<UserResponse> {
     const data = CreateUserRequest.encode(request).finish();
@@ -937,6 +1181,39 @@ export class UserServiceClientImpl implements UserService {
     const data = UserIdRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "DeleteUser", data);
     return promise.then((data) => Empty.decode(new BinaryReader(data)));
+  }
+
+  SignUp(request: SignUpRequest): Promise<AuthResponse> {
+    const data = SignUpRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "SignUp", data);
+    return promise.then((data) => AuthResponse.decode(new BinaryReader(data)));
+  }
+
+  Login(request: LoginRequest): Promise<AuthResponse> {
+    const data = LoginRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "Login", data);
+    return promise.then((data) => AuthResponse.decode(new BinaryReader(data)));
+  }
+}
+
+/** ------------------- MAIN APP SERVICE */
+export interface HealthCheck {
+  Check(request: HealthCheckRequest): Promise<HealthCheckResponse>;
+}
+
+export const HealthCheckServiceName = "userms.HealthCheck";
+export class HealthCheckClientImpl implements HealthCheck {
+  private readonly rpc: Rpc;
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || HealthCheckServiceName;
+    this.rpc = rpc;
+    this.Check = this.Check.bind(this);
+  }
+  Check(request: HealthCheckRequest): Promise<HealthCheckResponse> {
+    const data = HealthCheckRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "Check", data);
+    return promise.then((data) => HealthCheckResponse.decode(new BinaryReader(data)));
   }
 }
 

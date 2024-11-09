@@ -25,7 +25,7 @@ dotenv.config({ path: path.resolve(process.cwd(), `.env.${ENV}`) });
           package: 'userms', // Proto package name
           protoPath: join(__dirname, '../proto/user-app.proto'), // Path to user.proto file
           url: "127.0.0.1:3001", // gRPC server URL for UserService
-        },
+        }
       },
       {
         name: "EVENTS_MS",

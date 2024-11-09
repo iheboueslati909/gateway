@@ -7,26 +7,33 @@ import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 
 async function bootstrap() {
+  // Initialize the main app for HTTP
   const app = await NestFactory.create(AppModule);
-  
-  const grpcApp = await app.connectMicroservice<MicroserviceOptions>({
+  const configService = app.get(ConfigService);
+
+  // Retrieve configuration values from ConfigService
+  const grpcHost = configService.get<string>('GRPC_HOST');
+  const grpcPort = configService.get<number>('GRPC_PORT');
+  const appPort = configService.get<number>('APP_PORT');
+  const appHost = configService.get<string>('APP_HOST');
+
+  // Apply pipes only to the HTTP server
+  app.useGlobalPipes(new ValidationPipe());
+
+  console.log("env =", process.env.NODE_ENV, " host:port =", appHost, ":", appPort);
+
+  // Start the HTTP server and gRPC microservice
+  const grpcApp = app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
       package: 'gateway',
       protoPath: join(__dirname, '../proto/gateway-app.proto'),
-      url: 'localhost:50000',  // un-hard code it
+      url: `${grpcHost}:${grpcPort}`, // URL is now dynamically configured
     },
   });
-  const configService = app.get(ConfigService);
-
-  const port = configService.get<number>('APP_PORT');
-  const host = configService.get<string>('APP_HOST');
-
-  app.useGlobalPipes(new ValidationPipe());
-  console.log("env = ", process.env.NODE_ENV , " host:port = " , host,":",port);
 
   await app.startAllMicroservices();
-  await app.listen(port, host); 
-}
+  await app.listen(appPort);
 
+}
 bootstrap();
